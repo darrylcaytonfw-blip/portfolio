@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A web development portfolio with 15 interactive workflow demos across health, civic services, sports, commerce, and mobility.">
+  <title>Project Portfolio</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f5ee;
+      --ink: #172522;
+      --muted: #4f6057;
+      --line: #d6ddd0;
+      --accent: #c7ed79;
+      --serif: Georgia, 'Times New Roman', serif;
+      --mono: ui-monospace, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 1rem/1.55 system-ui, sans-serif; }
+    [hidden] { display: none !important; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid #476f2d; outline-offset: 4px; }
+    .shell { width: min(1120px, calc(100% - 3rem)); margin-inline: auto; }
+    .eyebrow, .brand, .catalog-meta { font: 700 .73rem/1.5 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+    .skip { position: absolute; z-index: 2; inset: .75rem auto auto .75rem; padding: .5rem; background: white; transform: translateY(-180%); }
+    .skip:focus { transform: translateY(0); }
+    header, footer { border-block-end: 1px solid var(--line); }
+    header .shell, footer .shell { display: flex; flex-wrap: wrap; gap: .75rem 2rem; align-items: center; justify-content: space-between; padding-block: 1.15rem; }
+    .brand { display: inline-flex; align-items: center; gap: .7rem; text-decoration: none; }
+    .brand::before { content: ''; width: .82rem; height: .82rem; background: #39644f; border-radius: 2px; transform: rotate(-12deg); }
+    .hero { display: grid; grid-template-columns: 1.12fr .88fr; gap: clamp(2rem, 6vw, 6rem); align-items: center; padding-block: clamp(3.2rem, 8vw, 7rem); }
+    h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.03; }
+    h1 { margin: .65rem 0 1.15rem; font-size: clamp(3rem, 7.2vw, 6.55rem); letter-spacing: -.07em; }
+    h1 em { color: #39644f; }
+    .hero-copy { color: var(--muted); max-width: 33rem; font-size: clamp(1rem, 2vw, 1.15rem); margin-block: 0 1.55rem; }
+    .primary { display: inline-flex; align-items: center; gap: .65rem; padding: .7rem 1rem; background: var(--accent); border: 1px solid #9abb59; border-radius: 5px; font-weight: 700; text-decoration: none; }
+    .primary:hover { background: #b3df5e; }
+    .map { margin: 0; padding: clamp(1.15rem, 4vw, 2.2rem); color: #f4f5e8; background: #19362d; border-radius: 11px; box-shadow: 8px 8px 0 #dce5d1; }
+    .map .eyebrow { margin: 0 0 1rem; color: var(--accent); }
+    .map svg { display: block; width: 100%; height: auto; }
+    .map figcaption { margin-top: .65rem; font: .72rem/1.5 var(--mono); color: #d0e0d5; }
+    .catalog { padding-block: 2.6rem 4rem; border-block-start: 1px solid var(--line); }
+    .catalog-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: .8rem 2rem; margin-bottom: 1.3rem; }
+    .catalog-head p { margin: .45rem 0 0; color: var(--muted); }
+    h2 { margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: -.05em; }
+    .filters { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.45rem; }
+    button { color: inherit; font: inherit; cursor: pointer; }
+    .filters button { padding: .45rem .85rem; border: 1px solid #adbbae; border-radius: 2rem; background: transparent; font-size: .89rem; }
+    .filters button[aria-pressed='true'] { color: white; background: #284b3d; border-color: #284b3d; }
+    .filters button:hover:not([aria-pressed='true']) { background: #e9ede1; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: .9rem; }
+    .project { overflow: clip; border: 1px solid var(--line); border-radius: 7px; background: #fffef9; }
+    .project[open] { grid-column: span 2; }
+    .project summary { position: relative; display: flex; min-height: 14rem; flex-direction: column; cursor: pointer; padding: 1.1rem 1.15rem; list-style: none; }
+    .project summary::-webkit-details-marker { display: none; }
+    .project summary:focus-visible { outline-offset: -4px; }
+    .project summary:hover { background: #f0f3e8; }
+    .project summary .eyebrow { color: #425b4d; }
+    .project h3 { margin: .55rem 0 .2rem; font-size: clamp(1.75rem, 3.2vw, 2.45rem); letter-spacing: -.05em; }
+    .project .description { color: var(--muted); margin: .45rem 0 .9rem; max-width: 53ch; font-size: .94rem; }
+    .demo-link { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: auto; font-size: .85rem; font-weight: 750; }
+    .demo-link::after { display: grid; place-items: center; content: '+'; width: 1.65rem; height: 1.65rem; border-radius: 50%; background: #e7efdc; color: #274538; }
+    .project[open] .demo-link::after { content: '−'; }
+    .close-label { display: none; }
+    .project[open] .close-label { display: inline; }
+    .project[open] .open-label { display: none; }
+    .demo { padding: 1.1rem 1.15rem; border-top: 1px solid var(--line); background: #edf2e6; }
+    .demo-head { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .8rem; justify-content: space-between; }
+    .demo-head h4 { margin: 0; font-size: 1rem; }
+    .badge { color: #355549; background: #dce8d2; padding: .18rem .5rem; border-radius: 5px; font: .68rem/1.5 var(--mono); text-transform: uppercase; }
+    .steps { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .9rem; }
+    .steps button { padding: .4rem .58rem; background: #fffef9; border: 1px solid #adbbae; border-radius: 4px; font-size: .78rem; }
+    .steps button[aria-pressed='true'] { background: #284b3d; color: white; border-color: #284b3d; }
+    .demo-state { margin-top: .65rem; padding: .8rem; background: #fffef9; border: 1px solid var(--line); border-radius: 4px; }
+    .demo-state h5 { margin: 0; font-size: .92rem; }
+    .demo-state p { margin: .25rem 0 .65rem; color: var(--muted); font-size: .88rem; }
+    dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin: 0; }
+    dl div { padding-left: .65rem; border-left: 2px solid #adcb8b; }
+    dt { color: var(--muted); font-size: .73rem; }
+    dd { margin: .12rem 0 0; font-size: .87rem; font-weight: 700; overflow-wrap: anywhere; }
+    footer { border-block-start: 1px solid var(--line); color: var(--muted); font-size: .87rem; }
+    @media (max-width: 840px) {
+      .hero { gap: 2rem; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 610px) {
+      .shell { width: calc(100% - 2rem); }
+      .hero, .grid { grid-template-columns: 1fr; }
+      .hero { padding-block: 3rem; }
+      .map { max-width: 27rem; }
+      .project[open] { grid-column: auto; }
+      .project summary { min-height: 0; }
+    }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#projects">Skip to projects</a>
+  <header>
+    <div class="shell">
+      <a class="brand" href="#top">Project portfolio</a>
+      <a href="https://github.com/darrylcaytonfw-blip">GitHub profile ↗</a>
+    </div>
+  </header>
+  <main>
+    <section class="shell hero" aria-labelledby="portfolio-title">
+      <div>
+        <p class="eyebrow">Web development portfolio</p>
+        <h1 id="portfolio-title">Web applications<br><em>in practice.</em></h1>
+        <p class="hero-copy">Explore 15 projects spanning clinic operations, civic services, sports, commerce, and mobility. Open a project to walk through a sample workflow.</p>
+        <a class="primary" href="#projects">Explore projects <span aria-hidden="true">↓</span></a>
+      </div>
+      <figure class="map">
+        <p class="eyebrow">Portfolio overview</p>
+        <svg viewBox="0 0 360 220" role="img" aria-labelledby="map-title">
+          <title id="map-title">Six civic, four health, two sports, two commerce, and one mobility project</title>
+          <g fill="none" stroke="#638471" stroke-width="1.2">
+            <path d="M83 108h60m0 0V28m0 80v80m0-160h37m-37 40h37m-37 40h37m-37 40h37m-37 40h37"/>
+            <circle cx="49" cy="108" r="34"/>
+          </g>
+          <g fill="#c7ed79">
+            <circle cx="180" cy="28" r="4"/><circle cx="180" cy="68" r="4"/><circle cx="180" cy="108" r="4"/>
+            <circle cx="180" cy="148" r="4"/><circle cx="180" cy="188" r="4"/>
+          </g>
+          <g fill="#f4f5e8" font-family="monospace" font-size="15">
+            <text x="200" y="34">Civic</text><text x="200" y="74">Health</text><text x="200" y="114">Sports</text>
+            <text x="200" y="154">Commerce</text><text x="200" y="194">Mobility</text>
+          </g>
+          <g fill="#c7ed79" font-family="monospace" text-anchor="middle">
+            <text x="49" y="117" font-size="26">15</text>
+            <text x="325" y="34">06</text><text x="325" y="74">04</text><text x="325" y="114">02</text>
+            <text x="325" y="154">02</text><text x="325" y="194">01</text>
+          </g>
+        </svg>
+        <figcaption>Five domains · Fifteen interactive demos</figcaption>
+      </figure>
+    </section>
+    <section class="catalog" id="projects" aria-labelledby="catalog-title">
+      <div class="shell">
+        <div class="catalog-head">
+          <div>
+            <h2 id="catalog-title">Project library</h2>
+            <p>Each demo is a recreated workflow using fictional sample data.</p>
+          </div>
+          <div class="catalog-meta" id="result-count" role="status">15 projects</div>
+        </div>
+        <div class="filters" id="filters" role="group" aria-label="Filter by project category" hidden>
+          <button type="button" data-filter="All" aria-pressed="true">All</button>
+          <button type="button" data-filter="Civic" aria-pressed="false">Civic</button>
+          <button type="button" data-filter="Health" aria-pressed="false">Health</button>
+          <button type="button" data-filter="Sports" aria-pressed="false">Sports</button>
+          <button type="button" data-filter="Commerce" aria-pressed="false">Commerce</button>
+          <button type="button" data-filter="Mobility" aria-pressed="false">Mobility</button>
+        </div>
+        <div class="grid" id="project-grid">
+          <details class="project" id="pvl" data-group="Sports">
+            <summary>
+              <span class="eyebrow">01 · Match operations</span>
+              <h3>PVL Live Match</h3>
+              <p class="description">A match-day workspace for staff to prepare rosters, track points and set scores, and finalize a match record.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="PVL Live Match demo">
+              <div class="demo-head"><h4>Match console</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="pvl-step-1" aria-pressed="true">Prepare</button>
+                <button type="button" data-step="2" aria-controls="pvl-step-2" aria-pressed="false">Score</button>
+                <button type="button" data-step="3" aria-controls="pvl-step-3" aria-pressed="false">Finalize</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="pvl-step-1" data-panel="1">
+                <h5>Prepare</h5>
+                <p>Check the roster and mark the match ready.</p>
+                <dl>
+                  <div><dt>Sample fixture</dt><dd>Team Coral vs. Team Indigo</dd></div>
+                  <div><dt>Roster status</dt><dd>Ready</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="pvl-step-2" data-panel="2">
+                <h5>Score</h5>
+                <p>Record a point and review the running set score.</p>
+                <dl>
+                  <div><dt>Set 2</dt><dd>Coral 18 · Indigo 16</dd></div>
+                  <div><dt>Latest play</dt><dd>Point to Coral</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="pvl-step-3" data-panel="3">
+                <h5>Finalize</h5>
+                <p>Review the set results before closing the fixture.</p>
+                <dl>
+                  <div><dt>Final score</dt><dd>Coral 3 · Indigo 1</dd></div>
+                  <div><dt>Match record</dt><dd>Ready for review</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="healthlink-v2" data-group="Health">
+            <summary>
+              <span class="eyebrow">02 · Clinic operations</span>
+              <h3>HealthLink v2</h3>
+              <p class="description">A clinic platform that connects reception, clinical orders, diagnostics, and collection with a separate patient experience.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="HealthLink v2 demo">
+              <div class="demo-head"><h4>Reception workspace</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="healthlink-v2-step-1" aria-pressed="true">Check in</button>
+                <button type="button" data-step="2" aria-controls="healthlink-v2-step-2" aria-pressed="false">Route order</button>
+                <button type="button" data-step="3" aria-controls="healthlink-v2-step-3" aria-pressed="false">Review billing</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="healthlink-v2-step-1" data-panel="1">
+                <h5>Check in</h5>
+                <p>Find a sample appointment and place it in the reception queue.</p>
+                <dl>
+                  <div><dt>Appointment</dt><dd>Demo visit 024</dd></div>
+                  <div><dt>Queue status</dt><dd>Checked in</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="healthlink-v2-step-2" data-panel="2">
+                <h5>Route order</h5>
+                <p>Hand an illustrative diagnostic order to the next department.</p>
+                <dl>
+                  <div><dt>Service</dt><dd>Basic lab panel</dd></div>
+                  <div><dt>Order status</dt><dd>In progress</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="healthlink-v2-step-3" data-panel="3">
+                <h5>Review billing</h5>
+                <p>See how the order becomes a line item for collection.</p>
+                <dl>
+                  <div><dt>Billing item</dt><dd>Basic lab panel</dd></div>
+                  <div><dt>Collection status</dt><dd>For review</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="ugnayan" data-group="Civic">
+            <summary>
+              <span class="eyebrow">03 · Community services</span>
+              <h3>Ugnayan</h3>
+              <p class="description">A member portal that brings service requests, referrals, and livelihood opportunities into one place.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="Ugnayan demo">
+              <div class="demo-head"><h4>Member service portal</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="ugnayan-step-1" aria-pressed="true">Browse services</button>
+                <button type="button" data-step="2" aria-controls="ugnayan-step-2" aria-pressed="false">Review request</button>
+                <button type="button" data-step="3" aria-controls="ugnayan-step-3" aria-pressed="false">Track follow-up</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="ugnayan-step-1" data-panel="1">
+                <h5>Browse services</h5>
+                <p>Choose a service from a sample community directory.</p>
+                <dl>
+                  <div><dt>Service</dt><dd>Livelihood orientation</dd></div>
+                  <div><dt>Availability</dt><dd>Accepting requests</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="ugnayan-step-2" data-panel="2">
+                <h5>Review request</h5>
+                <p>Preview the details attached to a fictional request.</p>
+                <dl>
+                  <div><dt>Request</dt><dd>Sample request 012</dd></div>
+                  <div><dt>Request status</dt><dd>Ready for review</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="ugnayan-step-3" data-panel="3">
+                <h5>Track follow-up</h5>
+                <p>Check the next step and its status from the member view.</p>
+                <dl>
+                  <div><dt>Next step</dt><dd>Orientation confirmation</dd></div>
+                  <div><dt>Follow-up status</dt><dd>Pending</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="paymaster" data-group="Commerce">
+            <summary>
+              <span class="eyebrow">04 · Wallet and payment operations</span>
+              <h3>Paymaster</h3>
+              <p class="description">A wallet dashboard for managing project payments, funding requests, transfers, and transaction history.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="Paymaster demo">
+              <div class="demo-head"><h4>Wallet activity</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="paymaster-step-1" aria-pressed="true">Review balance</button>
+                <button type="button" data-step="2" aria-controls="paymaster-step-2" aria-pressed="false">Preview transfer</button>
+                <button type="button" data-step="3" aria-controls="paymaster-step-3" aria-pressed="false">Inspect history</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="paymaster-step-1" data-panel="1">
+                <h5>Review balance</h5>
+                <p>Compare the available amount with a pending funding request.</p>
+                <dl>
+                  <div><dt>Demo balance</dt><dd>PHP 1,250.00</dd></div>
+                  <div><dt>Funding request</dt><dd>Pending review</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="paymaster-step-2" data-panel="2">
+                <h5>Preview transfer</h5>
+                <p>Review a fictional amount and destination before a transfer.</p>
+                <dl>
+                  <div><dt>Demo transfer</dt><dd>PHP 250.00</dd></div>
+                  <div><dt>Destination</dt><dd>Sample project wallet</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="paymaster-step-3" data-panel="3">
+                <h5>Inspect history</h5>
+                <p>Check the sample transaction and its recorded status.</p>
+                <dl>
+                  <div><dt>Transaction</dt><dd>Demo transfer 008</dd></div>
+                  <div><dt>Activity status</dt><dd>Recorded</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="vleague" data-group="Sports">
+            <summary>
+              <span class="eyebrow">05 · Fan and league portal</span>
+              <h3>V-League</h3>
+              <p class="description">A collegiate volleyball portal organized around teams, standings, player profiles, match schedules, and the fan experience.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="V-League demo">
+              <div class="demo-head"><h4>Matchday guide</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="vleague-step-1" aria-pressed="true">Explore teams</button>
+                <button type="button" data-step="2" aria-controls="vleague-step-2" aria-pressed="false">Choose a match</button>
+                <button type="button" data-step="3" aria-controls="vleague-step-3" aria-pressed="false">Plan matchday</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="vleague-step-1" data-panel="1">
+                <h5>Explore teams</h5>
+                <p>Browse a fictional team and see its sample standing.</p>
+                <dl>
+                  <div><dt>Sample team</dt><dd>West Campus</dd></div>
+                  <div><dt>Standing</dt><dd>2nd in demo table</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="vleague-step-2" data-panel="2">
+                <h5>Choose a match</h5>
+                <p>Open a sample fixture and review its matchday details.</p>
+                <dl>
+                  <div><dt>Sample fixture</dt><dd>West Campus vs. East Campus</dd></div>
+                  <div><dt>Schedule</dt><dd>Demo day · 4:00 PM</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="vleague-step-3" data-panel="3">
+                <h5>Plan matchday</h5>
+                <p>Review the selected section in an illustrative seat preview.</p>
+                <dl>
+                  <div><dt>Seat preview</dt><dd>Upper section</dd></div>
+                  <div><dt>Selection</dt><dd>Two demo seats</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="yakap" data-group="Health">
+            <summary>
+              <span class="eyebrow">06 · Patient access</span>
+              <h3>New Yakap</h3>
+              <p class="description">A HealthLink-based patient and clinic experience for navigating services, appointments, and follow-up documents.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="New Yakap demo">
+              <div class="demo-head"><h4>Patient service journey</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="yakap-step-1" aria-pressed="true">Find a service</button>
+                <button type="button" data-step="2" aria-controls="yakap-step-2" aria-pressed="false">Choose a slot</button>
+                <button type="button" data-step="3" aria-controls="yakap-step-3" aria-pressed="false">Review follow-up</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="yakap-step-1" data-panel="1">
+                <h5>Find a service</h5>
+                <p>Pick a service from the sample clinic catalog.</p>
+                <dl>
+                  <div><dt>Sample service</dt><dd>Primary care visit</dd></div>
+                  <div><dt>Location</dt><dd>Demo care center</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="yakap-step-2" data-panel="2">
+                <h5>Choose a slot</h5>
+                <p>Review a fictional time and visit details before booking.</p>
+                <dl>
+                  <div><dt>Appointment slot</dt><dd>Demo day · 10:30 AM</dd></div>
+                  <div><dt>Booking status</dt><dd>For review</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="yakap-step-3" data-panel="3">
+                <h5>Review follow-up</h5>
+                <p>See the next step from the patient’s point of view.</p>
+                <dl>
+                  <div><dt>Follow-up</dt><dd>Visit instructions</dd></div>
+                  <div><dt>Document status</dt><dd>Available</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="healthlink" data-group="Health">
+            <summary>
+              <span class="eyebrow">07 · Clinic services</span>
+              <h3>HealthLink</h3>
+              <p class="description">A clinic portal with service navigation and patient access. Its workflow connects the visit with subsequent account activity.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="HealthLink demo">
+              <div class="demo-head"><h4>Clinic service overview</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="healthlink-step-1" aria-pressed="true">Select service</button>
+                <button type="button" data-step="2" aria-controls="healthlink-step-2" aria-pressed="false">Review visit</button>
+                <button type="button" data-step="3" aria-controls="healthlink-step-3" aria-pressed="false">Check activity</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="healthlink-step-1" data-panel="1">
+                <h5>Select service</h5>
+                <p>Choose a service from a fictional clinic catalog.</p>
+                <dl>
+                  <div><dt>Sample service</dt><dd>General consultation</dd></div>
+                  <div><dt>Visit type</dt><dd>Scheduled</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="healthlink-step-2" data-panel="2">
+                <h5>Review visit</h5>
+                <p>See the sample visit in the patient's service history.</p>
+                <dl>
+                  <div><dt>Visit record</dt><dd>Demo visit 016</dd></div>
+                  <div><dt>Visit status</dt><dd>Completed</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="healthlink-step-3" data-panel="3">
+                <h5>Check activity</h5>
+                <p>Review a fictional entry related to the visit.</p>
+                <dl>
+                  <div><dt>Account activity</dt><dd>Consultation charge</dd></div>
+                  <div><dt>Record status</dt><dd>Available</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="sacred-heart" data-group="Health">
+            <summary>
+              <span class="eyebrow">08 · Facility services</span>
+              <h3>Sacred Heart</h3>
+              <p class="description">A service portal with appointment selection and request tracking, supported by facility and reporting views.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="Sacred Heart demo">
+              <div class="demo-head"><h4>Appointment desk</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="sacred-heart-step-1" aria-pressed="true">Choose facility</button>
+                <button type="button" data-step="2" aria-controls="sacred-heart-step-2" aria-pressed="false">Select time</button>
+                <button type="button" data-step="3" aria-controls="sacred-heart-step-3" aria-pressed="false">Track request</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="sacred-heart-step-1" data-panel="1">
+                <h5>Choose facility</h5>
+                <p>Find a fictional facility in the directory.</p>
+                <dl>
+                  <div><dt>Sample location</dt><dd>Demo health center</dd></div>
+                  <div><dt>Service</dt><dd>Consultation</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="sacred-heart-step-2" data-panel="2">
+                <h5>Select time</h5>
+                <p>Inspect a sample appointment slot and availability.</p>
+                <dl>
+                  <div><dt>Appointment slot</dt><dd>Demo day · 11:00 AM</dd></div>
+                  <div><dt>Availability</dt><dd>Open</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="sacred-heart-step-3" data-panel="3">
+                <h5>Track request</h5>
+                <p>Review the status from the service request screen.</p>
+                <dl>
+                  <div><dt>Request</dt><dd>Demo appointment 006</dd></div>
+                  <div><dt>Request status</dt><dd>Confirmed</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="aex-systems" data-group="Commerce">
+            <summary>
+              <span class="eyebrow">09 · Business tools</span>
+              <h3>AEX Systems</h3>
+              <p class="description">A business workspace with separate views for products, inquiries, marketing, and shared company information.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="AEX Systems demo">
+              <div class="demo-head"><h4>Product and inquiry workspace</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="aex-systems-step-1" aria-pressed="true">Review product</button>
+                <button type="button" data-step="2" aria-controls="aex-systems-step-2" aria-pressed="false">Review inquiry</button>
+                <button type="button" data-step="3" aria-controls="aex-systems-step-3" aria-pressed="false">Check company profile</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="aex-systems-step-1" data-panel="1">
+                <h5>Review product</h5>
+                <p>Inspect an illustrative product entry and publication state.</p>
+                <dl>
+                  <div><dt>Product draft</dt><dd>Sample service package</dd></div>
+                  <div><dt>Publication status</dt><dd>Draft</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="aex-systems-step-2" data-panel="2">
+                <h5>Review inquiry</h5>
+                <p>See a fictional request for more information about the product.</p>
+                <dl>
+                  <div><dt>Customer request</dt><dd>Request for a quote</dd></div>
+                  <div><dt>Inquiry status</dt><dd>New</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="aex-systems-step-3" data-panel="3">
+                <h5>Check company profile</h5>
+                <p>Preview which shared company details appear with the product.</p>
+                <dl>
+                  <div><dt>Company profile</dt><dd>Demo Studio</dd></div>
+                  <div><dt>Profile status</dt><dd>Ready for review</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="pace-ph" data-group="Civic">
+            <summary>
+              <span class="eyebrow">10 · Membership and programs</span>
+              <h3>PACE-PH</h3>
+              <p class="description">A public site for clean-election programs, memberships, organization partnerships, articles, and a shop.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="PACE-PH demo">
+              <div class="demo-head"><h4>Membership journey</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="pace-ph-step-1" aria-pressed="true">Explore programs</button>
+                <button type="button" data-step="2" aria-controls="pace-ph-step-2" aria-pressed="false">Compare membership</button>
+                <button type="button" data-step="3" aria-controls="pace-ph-step-3" aria-pressed="false">Review registration</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="pace-ph-step-1" data-panel="1">
+                <h5>Explore programs</h5>
+                <p>Review an illustrative program and how to get involved.</p>
+                <dl>
+                  <div><dt>Program</dt><dd>Voter education workshop</dd></div>
+                  <div><dt>Participation</dt><dd>Open for interest</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="pace-ph-step-2" data-panel="2">
+                <h5>Compare membership</h5>
+                <p>Choose a sample plan and review the next step.</p>
+                <dl>
+                  <div><dt>Membership</dt><dd>Community member</dd></div>
+                  <div><dt>Selection</dt><dd>For review</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="pace-ph-step-3" data-panel="3">
+                <h5>Review registration</h5>
+                <p>See how a fictional request appears in the account area.</p>
+                <dl>
+                  <div><dt>Registration</dt><dd>Demo member application</dd></div>
+                  <div><dt>Application status</dt><dd>Submitted</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="pollwatch" data-group="Civic">
+            <summary>
+              <span class="eyebrow">11 · Election monitoring</span>
+              <h3>Pollwatch</h3>
+              <p class="description">An election-monitoring portal with a precinct finder and tools for logging and reviewing incidents.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="Pollwatch demo">
+              <div class="demo-head"><h4>Field reporting desk</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="pollwatch-step-1" aria-pressed="true">Find precinct</button>
+                <button type="button" data-step="2" aria-controls="pollwatch-step-2" aria-pressed="false">Review incident</button>
+                <button type="button" data-step="3" aria-controls="pollwatch-step-3" aria-pressed="false">Track report</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="pollwatch-step-1" data-panel="1">
+                <h5>Find precinct</h5>
+                <p>Search a fictional polling location in the sample directory.</p>
+                <dl>
+                  <div><dt>Polling location</dt><dd>Sample district</dd></div>
+                  <div><dt>Precinct</dt><dd>Demo cluster 04</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="pollwatch-step-2" data-panel="2">
+                <h5>Review incident</h5>
+                <p>Preview a fictional observation before it enters the reporting queue.</p>
+                <dl>
+                  <div><dt>Observation</dt><dd>Signage question</dd></div>
+                  <div><dt>Report status</dt><dd>Draft</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="pollwatch-step-3" data-panel="3">
+                <h5>Track report</h5>
+                <p>See how an item appears for follow-up.</p>
+                <dl>
+                  <div><dt>Report</dt><dd>Demo report 019</dd></div>
+                  <div><dt>Review status</dt><dd>Queued</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="bilis-ride" data-group="Mobility">
+            <summary>
+              <span class="eyebrow">12 · Trip booking</span>
+              <h3>Bilis Ride</h3>
+              <p class="description">A transport booking experience that connects pickup and destination selection with fare review and trip history.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="Bilis Ride demo">
+              <div class="demo-head"><h4>Trip planner</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="bilis-ride-step-1" aria-pressed="true">Plan route</button>
+                <button type="button" data-step="2" aria-controls="bilis-ride-step-2" aria-pressed="false">Review fare</button>
+                <button type="button" data-step="3" aria-controls="bilis-ride-step-3" aria-pressed="false">View journey</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="bilis-ride-step-1" data-panel="1">
+                <h5>Plan route</h5>
+                <p>Choose two fictional stops and preview the selected route.</p>
+                <dl>
+                  <div><dt>Pickup</dt><dd>North Demo Stop</dd></div>
+                  <div><dt>Destination</dt><dd>Market Demo Stop</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="bilis-ride-step-2" data-panel="2">
+                <h5>Review fare</h5>
+                <p>See an illustrative fare before confirming the trip.</p>
+                <dl>
+                  <div><dt>Sample fare</dt><dd>PHP 35.00</dd></div>
+                  <div><dt>Trip status</dt><dd>For review</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="bilis-ride-step-3" data-panel="3">
+                <h5>View journey</h5>
+                <p>Open a sample trip in the journey history.</p>
+                <dl>
+                  <div><dt>Journey</dt><dd>Demo trip 027</dd></div>
+                  <div><dt>Trip status</dt><dd>Completed</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="sanggunian" data-group="Civic">
+            <summary>
+              <span class="eyebrow">13 · Legislative workspace</span>
+              <h3>Sanggunian</h3>
+              <p class="description">A workspace for Philippine legislative bodies with meeting calendars, committee workflows, and document archives.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="Sanggunian demo">
+              <div class="demo-head"><h4>Committee workbench</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="sanggunian-step-1" aria-pressed="true">Open agenda</button>
+                <button type="button" data-step="2" aria-controls="sanggunian-step-2" aria-pressed="false">Review committee</button>
+                <button type="button" data-step="3" aria-controls="sanggunian-step-3" aria-pressed="false">Find record</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="sanggunian-step-1" data-panel="1">
+                <h5>Open agenda</h5>
+                <p>Review an illustrative item in the order of business.</p>
+                <dl>
+                  <div><dt>Agenda item</dt><dd>Public space proposal</dd></div>
+                  <div><dt>Session</dt><dd>Demo session 03</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="sanggunian-step-2" data-panel="2">
+                <h5>Review committee</h5>
+                <p>See the sample item routed to a committee.</p>
+                <dl>
+                  <div><dt>Committee</dt><dd>Public works</dd></div>
+                  <div><dt>Workflow stage</dt><dd>For discussion</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="sanggunian-step-3" data-panel="3">
+                <h5>Find record</h5>
+                <p>Locate a fictional meeting record in the archive.</p>
+                <dl>
+                  <div><dt>Meeting record</dt><dd>Demo record 031</dd></div>
+                  <div><dt>Archive status</dt><dd>Filed</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="serbisyo" data-group="Civic">
+            <summary>
+              <span class="eyebrow">14 · Mobile government</span>
+              <h3>Serbisyo.org</h3>
+              <p class="description">A mobile government portal with a service catalog, digital documents, job listings, and resident application tracking.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="Serbisyo.org demo">
+              <div class="demo-head"><h4>Resident service desk</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="serbisyo-step-1" aria-pressed="true">Find a service</button>
+                <button type="button" data-step="2" aria-controls="serbisyo-step-2" aria-pressed="false">Review application</button>
+                <button type="button" data-step="3" aria-controls="serbisyo-step-3" aria-pressed="false">Track document</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="serbisyo-step-1" data-panel="1">
+                <h5>Find a service</h5>
+                <p>Browse a sample service in the resident catalog.</p>
+                <dl>
+                  <div><dt>Service</dt><dd>Sample document request</dd></div>
+                  <div><dt>Category</dt><dd>Resident services</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="serbisyo-step-2" data-panel="2">
+                <h5>Review application</h5>
+                <p>See what a fictional application looks like in the portal.</p>
+                <dl>
+                  <div><dt>Application</dt><dd>Demo application 021</dd></div>
+                  <div><dt>Application status</dt><dd>Received</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="serbisyo-step-3" data-panel="3">
+                <h5>Track document</h5>
+                <p>Check the current step in the sample document workflow.</p>
+                <dl>
+                  <div><dt>Digital document</dt><dd>Sample service certificate</dd></div>
+                  <div><dt>Document status</dt><dd>For review</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+          <details class="project" id="serbisyo-cloud" data-group="Civic">
+            <summary>
+              <span class="eyebrow">15 · Government service workflows</span>
+              <h3>Serbisyo Cloud</h3>
+              <p class="description">A government services build with designs for application intake, service requests, and government performance reporting.</p>
+              <span class="demo-link"><span class="open-label">Open demo</span><span class="close-label">Close demo</span></span>
+            </summary>
+            <section class="demo" aria-label="Serbisyo Cloud demo">
+              <div class="demo-head"><h4>Service operations</h4><span class="badge">Sample data</span></div>
+              <div class="steps" role="group" aria-label="Workflow steps" hidden>
+                <button type="button" data-step="1" aria-controls="serbisyo-cloud-step-1" aria-pressed="true">Review intake</button>
+                <button type="button" data-step="2" aria-controls="serbisyo-cloud-step-2" aria-pressed="false">Route application</button>
+                <button type="button" data-step="3" aria-controls="serbisyo-cloud-step-3" aria-pressed="false">Inspect reporting</button>
+              </div>
+              <div aria-live="polite">
+              <section class="demo-state" id="serbisyo-cloud-step-1" data-panel="1">
+                <h5>Review intake</h5>
+                <p>Open a fictional request from a sample assistance queue.</p>
+                <dl>
+                  <div><dt>Service request</dt><dd>Mobility assistance</dd></div>
+                  <div><dt>Intake status</dt><dd>Received</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="serbisyo-cloud-step-2" data-panel="2">
+                <h5>Route application</h5>
+                <p>Review which sample desk handles the next stage.</p>
+                <dl>
+                  <div><dt>Assigned desk</dt><dd>Demo services team</dd></div>
+                  <div><dt>Application status</dt><dd>In review</dd></div>
+                </dl>
+              </section>
+              <section class="demo-state" id="serbisyo-cloud-step-3" data-panel="3">
+                <h5>Inspect reporting</h5>
+                <p>See how the service queue can be summarized in a performance view.</p>
+                <dl>
+                  <div><dt>Report period</dt><dd>Sample week</dd></div>
+                  <div><dt>Report status</dt><dd>Preview ready</dd></div>
+                </dl>
+              </section>
+              </div>
+            </section>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="shell"><span>Project portfolio</span><a href="#top">Back to top ↑</a></div>
+  </footer>
+  <script>
+    const filters = document.getElementById('filters');
+    const grid = document.getElementById('project-grid');
+    const cards = [...grid.querySelectorAll('.project')];
+    const resultCount = document.getElementById('result-count');
+
+    function filterProjects(category) {
+      for (const button of filters.querySelectorAll('button')) {
+        button.setAttribute('aria-pressed', String(button.dataset.filter === category));
+      }
+      let count = 0;
+      for (const card of cards) {
+        const matches = category === 'All' || card.dataset.group === category;
+        card.hidden = !matches;
+        count += Number(matches);
+      }
+      resultCount.textContent = `${count} ${count === 1 ? 'project' : 'projects'}`;
+    }
+
+    filters.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-filter]');
+      if (button) filterProjects(button.dataset.filter);
+    });
+    filters.hidden = false;
+
+    function showStep(demo, step) {
+      for (const button of demo.querySelectorAll('button[data-step]')) {
+        button.setAttribute('aria-pressed', String(button.dataset.step === step));
+      }
+      for (const panel of demo.querySelectorAll('[data-panel]')) {
+        panel.hidden = panel.dataset.panel !== step;
+      }
+    }
+
+    for (const demo of grid.querySelectorAll('.demo')) {
+      showStep(demo, '1');
+      demo.querySelector('.steps').hidden = false;
+    }
+    grid.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-step]');
+      if (button) showStep(button.closest('.demo'), button.dataset.step);
+    });
+
+    function openLinkedProject() {
+      const card = cards.find((project) => `#${project.id}` === location.hash);
+      if (!card) return;
+      if (card.hidden) filterProjects('All');
+      card.open = true;
+    }
+
+    window.addEventListener('hashchange', openLinkedProject);
+    openLinkedProject();
+  </script>
+</body>
+</html>
